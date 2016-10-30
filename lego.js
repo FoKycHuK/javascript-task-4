@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы or и and
  */
-exports.isStar = false;
+exports.isStar = true;
 
 var PRIORITIES = {
     select: -1,
@@ -36,7 +36,7 @@ function getCopyWithFields(object, fields) {
 exports.query = function (collection) {
     [].slice.call(arguments, 1)
         .sort(function (a, b) {
-            return getFunctionPriority(b) - getFunctionPriority(a);
+            return getFunctionPriority(b) > getFunctionPriority(a) ? 1 : -1;
         })
         .forEach(function (func) {
             collection = func(collection);
