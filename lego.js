@@ -87,7 +87,7 @@ exports.sortBy = function (property, order) {
         });
 
         return collectionCopy.sort(function (a, b) {
-            return order === 'asc' ? a[property] - b[property] : b[property] - a[property];
+            return (a[property] > b[property] ? 1 : -1) * (order === 'asc' ? 1 : -1);
         });
     };
 };
