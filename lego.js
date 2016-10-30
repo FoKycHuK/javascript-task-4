@@ -19,7 +19,7 @@ function getFunctionPriority(func) {
 function getCopyWithFields(object, fields) {
     var copy = {};
     fields.forEach(function (field) {
-        if (object[field]) {
+        if (object[field] !== undefined) {
             copy[field] = object[field];
         }
     });
