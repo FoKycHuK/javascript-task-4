@@ -82,9 +82,9 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortby(collection) {
-        var collectionCopy = getCopyWithFields(collection, collection.map(function (_, index) {
-            return index;
-        }));
+        var collectionCopy = collection.map(function (value) {
+            return getCopyWithFields(value, Object.keys(value));
+        });
 
         return collectionCopy.sort(function (a, b) {
             return order === 'asc' ? a[property] - b[property] : b[property] - a[property];
