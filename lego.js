@@ -82,7 +82,11 @@ exports.filterIn = function (property, values) {
  */
 exports.sortBy = function (property, order) {
     return function sortby(collection) {
-        return collection.sort(function (a, b) {
+        var collectionCopy = getCopyWithFields(collection, collection.map(function (_, index) {
+            return index;
+        }));
+
+        return collectionCopy.sort(function (a, b) {
             return order === 'asc' ? a[property] - b[property] : b[property] - a[property];
         });
     };
