@@ -17,12 +17,14 @@ function getFunctionPriority(func) {
 }
 
 function getCopyWithFields(object, fields) {
-    var copy = {};
-    fields.forEach(function (field) {
-        if (object[field] !== undefined) {
-            copy[field] = object[field];
-        }
-    });
+    return fields.filter(function(field) {
+        return object[field] !== undefined;
+    })
+    .reduce(function (acc, field) {
+        acc[field] = object[field];
+
+        return acc;
+    }, {});
 
     return copy;
 }
@@ -34,15 +36,13 @@ function getCopyWithFields(object, fields) {
  * @returns {Array}
  */
 exports.query = function (collection) {
-    [].slice.call(arguments, 1)
+    return [].slice.call(arguments, 1)
         .sort(function (a, b) {
             return getFunctionPriority(b) > getFunctionPriority(a) ? 1 : -1;
         })
-        .forEach(function (func) {
-            collection = func(collection);
-        });
-
-    return collection;
+        .reduce(function (acc, func) {
+            return func(acc);
+        }, collection);
 };
 
 /**
