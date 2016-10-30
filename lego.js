@@ -17,7 +17,7 @@ function getFunctionPriority(func) {
 }
 
 function getCopyWithFields(object, fields) {
-    return fields.filter(function(field) {
+    return fields.filter(function (field) {
         return object[field] !== undefined;
     })
     .reduce(function (acc, field) {
@@ -25,8 +25,6 @@ function getCopyWithFields(object, fields) {
 
         return acc;
     }, {});
-
-    return copy;
 }
 
 /**
