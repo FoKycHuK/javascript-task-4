@@ -7,21 +7,21 @@
 exports.isStar = true;
 
 var PRIORITIES = {
-    select: -1,
-    limit: -10,
-    format: -100
+    select: 1,
+    limit: 10,
+    format: 100
 };
 
 function getFunctionPriority(func) {
     return PRIORITIES[func.name] ? PRIORITIES[func.name] : 0;
 }
 
-function getCopyWithFields(object, fields) {
+function getCopyWithFields(obj, fields) {
     return fields.filter(function (field) {
-        return object[field] !== undefined;
+        return obj[field] !== undefined;
     })
     .reduce(function (acc, field) {
-        acc[field] = object[field];
+        acc[field] = obj[field];
 
         return acc;
     }, {});
@@ -34,13 +34,17 @@ function getCopyWithFields(object, fields) {
  * @returns {Array}
  */
 exports.query = function (collection) {
+    var collectionCopy = collection.map(function (value) {
+        return getCopyWithFields(value, Object.keys(value));
+    });
+
     return [].slice.call(arguments, 1)
         .sort(function (a, b) {
-            return getFunctionPriority(b) > getFunctionPriority(a) ? 1 : -1;
+            return getFunctionPriority(b) < getFunctionPriority(a) ? 1 : -1;
         })
         .reduce(function (acc, func) {
             return func(acc);
-        }, collection);
+        }, collectionCopy);
 };
 
 /**
@@ -79,13 +83,11 @@ exports.filterIn = function (property, values) {
  * @returns {Function}
  */
 exports.sortBy = function (property, order) {
-    return function sortby(collection) {
-        var collectionCopy = collection.map(function (value) {
-            return getCopyWithFields(value, Object.keys(value));
-        });
+    var orderFactor = order === 'asc' ? 1 : -1;
 
-        return collectionCopy.sort(function (a, b) {
-            return (a[property] > b[property] ? 1 : -1) * (order === 'asc' ? 1 : -1);
+    return function sortBy(collection) {
+        return collection.sort(function (a, b) {
+            return (a[property] > b[property] ? 1 : -1) * orderFactor;
         });
     };
 };
@@ -99,10 +101,9 @@ exports.sortBy = function (property, order) {
 exports.format = function (property, formatter) {
     return function format(collection) {
         return collection.map(function (person) {
-            var personCopy = getCopyWithFields(person, Object.keys(person));
-            personCopy[property] = formatter(person[property]);
+            person[property] = formatter(person[property]);
 
-            return personCopy;
+            return person;
         });
     };
 };
