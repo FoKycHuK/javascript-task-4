@@ -69,7 +69,7 @@ exports.select = function () {
  * @returns {Function}
  */
 exports.filterIn = function (property, values) {
-    return function filter(collection) {
+    return function filterIn(collection) {
         return collection.filter(function (person) {
             return values.indexOf(person[property]) !== -1;
         });
